@@ -1,23 +1,24 @@
-class Bingo
+class BingoLastWin
   attr_reader :drawn_numbers, :boards
 
   def initialize(input_file)
     @drawn_numbers = input_file.gets.chomp.split(',')
     @boards = []
+    @wins = []
     prepare_boards(input_file)
   end
 
   def final_score
-    won_board = catch(:board_won) do
-      drawn_numbers.each do |drawn_number|
-        boards.each do |board|
-          board.mark_number(drawn_number)
-          throw :board_won, board if board.wins?
-        end
+    drawn_numbers.each do |drawn_number|
+      boards.each do |board|
+        next if board.wins? 
+        
+        board.mark_number(drawn_number)
+        @wins.push(board.final_score) if board.wins?
       end
     end
 
-    won_board.final_score
+    @wins.last
   end
 
   private

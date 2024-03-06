@@ -1,67 +1,10 @@
-# file_name = 'test_input.txt'
-file_name = 'puzzle_input.txt'
-
-class Queue
-  def initialize
-    @queue = []
-  end
-
-  def enqueue(element)
-    queue.push(element)
-  end
-
-  def dequeue
-    queue.shift
-  end
-
-  private
-  attr_accessor :queue
-end
-
-Location = Struct.new(:column_index, :row_index)
-
-class Point
-  attr_reader :height
-
-  def initialize(height, column_index, row_index)
-    @height = height
-    @column_index = column_index
-    @row_index = row_index
-  end
-
-  def up_point_location
-    @up ||= Location.new(column_index, positive_index(row_index - 1))
-  end
-
-  def down_point_location
-    @down ||= Location.new(column_index, row_index + 1)
-  end
-
-  def right_point_location
-    @right ||= Location.new(column_index + 1, row_index)
-  end
-  
-  def left_point_location
-    @left ||= Location.new(positive_index(column_index - 1), row_index)
-  end
-
-  def location_code
-    @location_code ||= "#{column_index}_#{row_index}"
-  end
-
-  private
-
-  def positive_index(index)
-    (index.zero? || index.positive?) ? index : 1000_000_000_000
-  end
-
-  attr_reader :column_index, :row_index
-end
+require_relative 'point'
+require_relative 'queue'
 
 class Heightmap
   def initialize(file_name)
     @map = []
-    prepare_map(file_name)
+    prepare_map!(file_name)
   end
 
   def sum_of_risk_levels 
@@ -131,7 +74,7 @@ class Heightmap
     map.fetch(location.column_index, []).fetch(location.row_index, nil)
   end
 
-  def prepare_map(file_name)
+  def prepare_map!(file_name)
     column_index = 0
 
     IO.foreach(file_name) do |line|
@@ -148,8 +91,3 @@ class Heightmap
 
   attr_reader :map
 end
-
-
-heightmap = Heightmap.new(file_name)
-p heightmap.sum_of_risk_levels
-p heightmap.multiplied_sizes_of_three_largest_basins
